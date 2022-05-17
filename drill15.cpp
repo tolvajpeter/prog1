@@ -1,66 +1,51 @@
-#include "string"
-#include "iostream"
-#include "stdexcept"
-#include "vector"
-
-//REFAKTORÁLÁS
-
+#include "Simple_window.h"
+#include "Graph.h"
 using namespace std;
+struct Person
+{
+	string name;
+	int age;
 
-class Person{
-	public:
-		Person(){};
-		//Person(string n, int a) : n{n}, a{a} {
-		Person(string f, string l, int a): f{f}, l{l}, a{a} {
-			if(a<0 || a>=150){
-				throw runtime_error("Invalid age");
-			}
-			string n= f+l;
-			for(int i=0; i<n.length(); i++){
-				if(n[i]==';' || n[i]==':' || n[i]=='"' || n[i]=='$' || n[i]=='['|| n[i]==']'|| n[i]=='*'|| n[i]=='&'|| n[i]=='^' || n[i]=='%'|| n[i]=='@'|| n[i]=='!'|| n[i]=='#'|| n[i]=='\''){
-					throw runtime_error("Invalid name");
-				}
-			}
-		
-		};
-		//string name() { return n; }
-		string first() {return f;}
-		string last() {return l;}
-		int age() { return a; }
-	private:
-		//string n;
-		string f, l;
-		int a;
+
 };
-
-ostream & operator<<(ostream & os, Person & s){  return os << s.first() <<" "<< s.last() << " "<<s.age()<<endl; }
-istream & operator>>(istream & is, Person & s){ 
-	string f,l;
-	int a;
-	is >> f >> l >>a;
-	s=Person(f,l,a);
-	return is;
-	}
-
-int main(){
-
- //Person p;
- Person p=Person("Goofy","Fff",63);
- /*p.name="Goofy";
- p.age=63;*/
- cout<<p.first() <<" "<<p.last() <<" "<< p.age() << endl;
-
- Person p2;
- cin>>p2;
- cout<<p2;
-
- vector<Person> vec;
- for(Person p; cin>>p;){  //while(cin>>p)
- 	if(p.first()=="end") break;
- 	vec.push_back(p);
- }
- for(Person p : vec){
- 	cout<<p<<endl;
- }
+double one(double x) {return 1;}
+double slope(double x) { return x/2; }
+double square(double x) { return x*x; }
+double sloping_cos(double x) { return cos(x/2); }
+int main()
+{
+	using namespace Graph_lib;
+	int xmax = 600;
+	int ymax = 600;
+	int slmin = -10;
+	int slmax = 11;
+	int sllength = 400;
+	int x_cross = 300;
+    	int y_cross = 300;
+    	int x_scale = 20, y_scale = 20;
+    	int xlength = 400, ylength = 400;
+    	Point crossp {x_cross, y_cross};
+	Simple_window win {Point{100,100}, xmax, ymax, "Function Graphs"};
+	Axis x {Axis::x, Point{100, y_cross}, xlength,x_scale, "1==20 pixels"};
+	Axis y {Axis::y, Point{x_cross, ylength+100}, ylength, y_scale};
+	x.set_color(Color::dark_red);
+	y.set_color(Color::dark_red);
+	//Function sl (one, slmin, slmax, crossp, sllength);
+	Function sl (one, slmin, slmax, crossp, sllength, x_scale, y_scale);
+	Function slp(slope, slmin, slmax, crossp, sllength, x_scale, y_scale);
+	Function sqre(square, slmin, slmax, crossp, sllength, x_scale, y_scale);
+	Function cosine(cos,slmin,slmax,crossp,sllength,x_scale,y_scale);
+	Function slp_cos(sloping_cos,slmin,slmax,crossp,sllength,x_scale,y_scale);
+	Text label (Point(x_cross-200,y_cross+80),"x/2");
+	cosine.set_color(Color::cyan);
+	win.attach(label);
+	win.attach(x);
+	win.attach(y);
+	win.attach(sl);
+	win.attach(slp);
+	win.attach(sqre);
+	win.attach(cosine);
+	win.attach(slp_cos);
+	win.wait_for_button();
 
 }
